@@ -30,6 +30,6 @@ public class Part extends BaseEntity {
 
     private String modelUrl;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "json")
     private String localCoordinates;
 }
