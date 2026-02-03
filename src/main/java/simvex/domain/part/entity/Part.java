@@ -3,6 +3,7 @@ package simvex.domain.part.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import simvex.domain.modelobject.entity.ModelObject;
+import simvex.global.common.BaseEntity;
 
 @Getter
 @Entity
@@ -10,7 +11,7 @@ import simvex.domain.modelobject.entity.ModelObject;
 @Builder(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class Part {
+public class Part extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

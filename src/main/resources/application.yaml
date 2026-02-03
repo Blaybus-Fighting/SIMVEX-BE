@@ -3,8 +3,8 @@ spring:
     name: simvex
   datasource:
     url: jdbc:mysql://localhost:3306/simvex
-    username: root
-    password: 0309
+    username:
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
