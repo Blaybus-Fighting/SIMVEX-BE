@@ -43,9 +43,6 @@ public class PrincipalOAuth2User implements OAuth2User {
         return userDTO.email();
     }
 
-    public String getRole() {
-        return userDTO.role();
-    }
     public String getProviderUserId() {
         return providerUserId;
     }

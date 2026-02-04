@@ -5,5 +5,4 @@ import simvex.domain.user.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByProviderUserId(String providerUserId);
-    boolean existsByProviderUserId(String providerUserId);
 }
