@@ -5,30 +5,31 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import java.time.LocalDateTime;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import simvex.global.common.BaseEntity;
 
 @Entity
 @Getter
 @Setter
-public class User {
+@Table(name = "users")
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String providerUserId;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private String name;
+
     private String role;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    private void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
 
 }

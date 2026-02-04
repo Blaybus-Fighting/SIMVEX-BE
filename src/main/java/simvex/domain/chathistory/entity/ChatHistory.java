@@ -3,7 +3,6 @@ package simvex.domain.chathistory.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import simvex.domain.session.entity.Session;
-import simvex.domain.user.entity.UserEntity;
 import simvex.global.common.BaseEntity;
 
 @Getter

@@ -37,7 +37,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
-        String providerUserId = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        String providerUserId = oAuth2Response.getProviderId();
         User user  = userRepository.findByProviderUserId(providerUserId);
 
         if (user == null) {
@@ -56,7 +56,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(user);
         }
 
-        UserDTO userDTO = new UserDTO(user.getName(), user.getEmail(), user.getRole());
-        return new PrincipalOAuth2User(providerUserId, userDTO, oAuth2User.getAttributes());
+        UserDTO userDTO = new UserDTO(user.getId(), user.getProviderUserId(), user.getName(), user.getEmail(), user.getRole());
+        return new PrincipalOAuth2User(userDTO, oAuth2User.getAttributes());
     }
 }
