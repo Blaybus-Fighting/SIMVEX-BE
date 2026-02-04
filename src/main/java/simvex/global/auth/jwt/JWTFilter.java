@@ -35,7 +35,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰이 없으면 다음 필터로 (인증이 필요한 경로는 authorizeHttpRequests에서 걸러짐)
         if (token == null) {
-            log.info("JWT 토큰이 쿠키에 없습니다! URL: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }

@@ -29,12 +29,8 @@ public class MemoService {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
 
-        Session session = sessionRepository.findById(request.sessionId())
-            .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
-
-        if (!session.getUser().getId().equals(user.getId())) {
-            throw new CustomException(ErrorCode.SESSION_ACCESS_DENIED);
-        }
+        Session session = sessionRepository.findByIdAndUserId(request.sessionId(), user.getId())
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_ACCESS_DENIED));
 
         Memo memo = Memo.create(user, session, request.content());
 
@@ -42,41 +38,32 @@ public class MemoService {
     }
 
     public List<MemoResponse> getMemos(Long userId, Long sessionId) {
-        // 본인의 세션인지 검증
-        Session session = sessionRepository.findById(sessionId)
-            .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        if (!session.getUser().getId().equals(userId)) {
-            throw new CustomException(ErrorCode.SESSION_ACCESS_DENIED);
-        }
+        sessionRepository.findByIdAndUserId(sessionId, userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
         return memoRepository.findAllBySessionIdAndUserId(sessionId, userId)
-            .stream()
-            .map(MemoResponse::from)
-            .toList();
+                .stream()
+                .map(memo -> new MemoResponse(memo.getId(), sessionId, memo.getContent(), memo.getCreatedAt(), memo.getUpdatedAt()))
+                .toList();
     }
 
     @Transactional
     public void updateMemo(Long userId, Long memoId, MemoRequest.Update request) {
-        Memo memo = memoRepository.findById(memoId)
-            .orElseThrow(() -> new CustomException(ErrorCode.MEMO_NOT_FOUND));
-
-        if (!memo.getUser().getId().equals(userId)) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-
-         memo.updateContent(request.content());
+        Memo memo = findMemoAndCheckOwnership(memoId, userId);
+        memo.updateContent(request.content());
     }
 
     @Transactional
     public void deleteMemo(Long userId, Long memoId) {
-        Memo memo = memoRepository.findById(memoId)
-            .orElseThrow(() -> new CustomException(ErrorCode.MEMO_NOT_FOUND));
-
-        if (!memo.getUser().getId().equals(userId)) {
-            throw new CustomException(ErrorCode.UNAUTHORIZED);
-        }
-
+        Memo memo = findMemoAndCheckOwnership(memoId, userId);
         memoRepository.delete(memo);
+    }
+
+    private Memo findMemoAndCheckOwnership(Long memoId, Long userId) {
+        Memo memo = memoRepository.findById(memoId)
+                .filter(m -> m.getUser().getId().equals(userId))
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMO_NOT_FOUND));
+        return memo;
     }
 }
