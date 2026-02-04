@@ -36,6 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-
-.env
-src/main/resources/application*.yaml
+### Spring Boot Configuration ###
+src/main/resources/application-dev.yml
+src/main/resources/application-prod.yml
+src/main/resources/application-dev.yaml
+src/main/resources/application-prod.yaml
