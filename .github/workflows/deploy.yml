@@ -52,6 +52,16 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/simvex-dev:${{ github.ref_name }}
 
+      # 설정 파일들을 서버로 복사
+      - name: Copy config files to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ github.ref == 'refs/heads/main' && secrets.MAIN_EC2_HOST || secrets.DEV_EC2_HOST }}
+          username: ubuntu
+          key: ${{ github.ref == 'refs/heads/main' && secrets.MAIN_EC2_SSH_KEY || secrets.DEV_EC2_SSH_KEY }}
+          source: "docker-compose.yml,nginx"
+          target: ${{ github.ref == 'refs/heads/main' && '~/simvex/main' || '~/simvex/dev' }}
+
       # 개발 서버(Dev) 배포
       - name: Deploy to Dev Server
         if: github.ref == 'refs/heads/dev'
