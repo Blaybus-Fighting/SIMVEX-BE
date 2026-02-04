@@ -50,7 +50,7 @@ jobs:
           context: .
           file: ./docker/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/simvex-dev:${{ github.ref_name }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/simvex:${{ github.ref_name }}
 
       # 설정 파일들을 서버로 복사
       - name: Copy config files to EC2
@@ -87,6 +87,9 @@ jobs:
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
             
+            # JWT
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+            
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
             docker compose up -d
@@ -115,6 +118,9 @@ jobs:
             # 구글 OAuth2
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+            
+            # JWT
+            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
