@@ -9,7 +9,7 @@ import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 import simvex.global.auth.oauth2.dto.GoogleResponse;
 import simvex.global.auth.oauth2.dto.OAuth2Response;
 import simvex.domain.user.dto.UserDTO;
-import simvex.domain.user.entity.UserEntity;
+import simvex.domain.user.entity.User;
 import simvex.domain.user.repository.UserRepository;
 
 @Service
@@ -25,7 +25,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        System.out.println(oAuth2User);
 
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
@@ -34,44 +33,30 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
         }
         else {
-
-            return null;
+            throw new OAuth2AuthenticationException("Unsupported registrationId: " + registrationId);
         }
 
         //리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만듬
-        String username = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
-        UserEntity existData = userRepository.findByUsername(username);
+        String providerUserId = oAuth2Response.getProvider()+" "+oAuth2Response.getProviderId();
+        User user  = userRepository.findByProviderUserId(providerUserId);
 
-        if (existData == null) {
+        if (user == null) {
+            user = new User();
+            user.setProviderUserId(providerUserId);
+            user.setEmail(oAuth2Response.getEmail());
+            user.setName(oAuth2Response.getName());
+            user.setRole("ROLE_USER");
 
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUsername(username);
-            userEntity.setEmail(oAuth2Response.getEmail());
-            userEntity.setName(oAuth2Response.getName());
-            userEntity.setRole("ROLE_USER");
-
-            userRepository.save(userEntity);
-
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(username);
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole("ROLE_USER");
-
-            return new PrincipalOAuth2User(userDTO);
+            userRepository.save(user);
         }
         else {
+            user.setName(oAuth2Response.getName());
+            user.setEmail(oAuth2Response.getEmail());
 
-            existData.setEmail(oAuth2Response.getEmail());
-            existData.setName(oAuth2Response.getName());
-
-            userRepository.save(existData);
-
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUsername(existData.getUsername());
-            userDTO.setName(oAuth2Response.getName());
-            userDTO.setRole(existData.getRole());
-
-            return new PrincipalOAuth2User(userDTO);
+            userRepository.save(user);
         }
+
+        UserDTO userDTO = new UserDTO(user.getName(), user.getEmail(), user.getRole());
+        return new PrincipalOAuth2User(providerUserId, userDTO, oAuth2User.getAttributes());
     }
 }

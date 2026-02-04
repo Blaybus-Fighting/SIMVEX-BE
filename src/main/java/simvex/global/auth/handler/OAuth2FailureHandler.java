@@ -1,4 +1,4 @@
-package simvex.global.auth.oauth2.handler;
+package simvex.global.auth.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
 //    private static final String FRONT_REDIRECT_URL = "http://localhost:3000/login"; // 로그인 페이지
-    private static final String FRONT_REDIRECT_URL = "http://localhost:8080/oauth/success"; // fail
+    private static final String FRONT_REDIRECT_URL = "http://localhost:8080/oauth/fail"; // fail
 
     @Override
     public void onAuthenticationFailure(

@@ -1,51 +1,52 @@
 package simvex.global.auth.oauth2.user;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import simvex.domain.user.dto.UserDTO;
 
 public class PrincipalOAuth2User implements OAuth2User {
-
+    private final String providerUserId;
     private final UserDTO userDTO;
+    private final Map<String, Object> attributes;
 
-    public PrincipalOAuth2User(UserDTO userDTO) {
-
+    public PrincipalOAuth2User(String providerUserId, UserDTO userDTO, Map<String, Object> attributes) {
+        this.providerUserId = providerUserId;
         this.userDTO = userDTO;
+        this.attributes = attributes;
+    }
+
+    // JWT 인증용(속성 없음)
+    public PrincipalOAuth2User(String providerUserId, UserDTO userDTO) {
+        this(providerUserId, userDTO, Map.of());
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-
-        collection.add(new GrantedAuthority() {
-
-            @Override
-            public String getAuthority() {
-
-                return userDTO.getRole();
-            }
-        });
-
-        return collection;
+        return List.of(new SimpleGrantedAuthority(userDTO.role()));
     }
 
     @Override
     public String getName() {
-
-        return userDTO.getName();
+        return userDTO.name();
     }
 
-    public String getUsername() {
+    public String getEmail() {
+        return userDTO.email();
+    }
 
-        return userDTO.getUsername();
+    public String getRole() {
+        return userDTO.role();
+    }
+    public String getProviderUserId() {
+        return providerUserId;
     }
 }

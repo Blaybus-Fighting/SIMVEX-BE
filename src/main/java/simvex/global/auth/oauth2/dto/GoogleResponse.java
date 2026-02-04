@@ -20,18 +20,18 @@ public class GoogleResponse implements OAuth2Response{
     @Override
     public String getProviderId() {
 
-        return attribute.get("sub").toString();
+        return String.valueOf(attribute.get("sub"));
     }
 
     @Override
     public String getEmail() {
 
-        return attribute.get("email").toString();
+        return String.valueOf(attribute.get("email"));
     }
 
     @Override
     public String getName() {
 
-        return attribute.get("name").toString();
+        return String.valueOf(attribute.get("name"));
     }
 }

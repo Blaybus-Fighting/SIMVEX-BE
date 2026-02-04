@@ -1,6 +1,7 @@
 package simvex.domain.user.dto;
 
-public record UserDTO(
+public record JwtPayload(
+        String providerUserId,
         String name,
         String email,
         String role

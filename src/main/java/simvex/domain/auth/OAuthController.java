@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class OAuthController {
 
     @GetMapping("/oauth/success")
-    @ResponseBody
     public String successAPI() {
 
         return "success";
     }
 
     @GetMapping("/oauth/fail")
-    @ResponseBody
     public String failAPI() {
 
         return "fail";
