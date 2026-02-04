@@ -10,7 +10,6 @@ import simvex.domain.memo.entity.Memo;
 import simvex.domain.memo.repository.MemoRepository;
 import simvex.domain.session.entity.Session;
 import simvex.domain.session.repository.SessionRepository;
-import simvex.domain.user.dto.UserDTO;
 import simvex.domain.user.entity.User;
 import simvex.domain.user.repository.UserRepository;
 import simvex.global.exception.CustomException;
