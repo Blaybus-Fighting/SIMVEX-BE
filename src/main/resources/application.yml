@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev # 로컬에서 실행할 때의 기본값
+    group:
+      dev:
+        - "oauth"
+      prod:
+        - "oauth"
+
+  # 공통 애플리케이션 설정
+  application:
+    name: simvex
+
+  # JPA/Hibernate 공통 설정
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+# 로깅 공통 설정
+logging:
+  level:
+    root: info
+    com.simvex: debug
