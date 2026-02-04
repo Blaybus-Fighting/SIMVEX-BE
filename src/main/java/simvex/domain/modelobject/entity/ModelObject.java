@@ -3,7 +3,6 @@ package simvex.domain.modelobject.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import simvex.domain.session.entity.Session;
-import simvex.domain.user.entity.UserEntity;
 import simvex.global.common.BaseEntity;
 
 @Getter
@@ -16,7 +15,7 @@ public class ModelObject extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

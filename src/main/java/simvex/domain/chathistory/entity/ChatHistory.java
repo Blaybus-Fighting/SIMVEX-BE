@@ -22,9 +22,6 @@ public class ChatHistory extends BaseEntity {
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
 
     @Column(columnDefinition = "text")
     private String message;
