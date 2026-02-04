@@ -71,8 +71,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.DEV_EC2_SSH_KEY }}
           script: |
-            # 배포 디렉토리 이동 및 설정 폴더 생성
-            mkdir -p ~/simvex/dev/nginx/conf.d
             cd ~/simvex/dev
             
             # .env 파일 동적 생성 (Secrets의 값을 주입)
@@ -102,14 +100,12 @@ jobs:
           username: ubuntu
           key: ${{ secrets.MAIN_EC2_SSH_KEY }}
           script: |
-            # 배포 디렉토리 이동 및 설정 폴더 생성
-            mkdir -p ~/simvex/main/nginx/conf.d
             cd ~/simvex/main
 
             # .env 파일 동적 생성 (Secrets의 값을 주입)
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" > .env
-            echo "IMAGE_TAG=dev" >> .env
-            echo "SPRING_PROFILE=dev" >> .env
+            echo "IMAGE_TAG=main" >> .env
+            echo "SPRING_PROFILE=prod" >> .env
 
             # DB
             echo "POSTGRES_URL=${{ secrets.POSTGRES_URL }}" >> .env
