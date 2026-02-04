@@ -3,25 +3,24 @@ package simvex.global.auth.oauth2.user;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import simvex.domain.user.dto.UserDTO;
 
 public class PrincipalOAuth2User implements OAuth2User {
-    private final String providerUserId;
     private final UserDTO userDTO;
     private final Map<String, Object> attributes;
 
-    public PrincipalOAuth2User(String providerUserId, UserDTO userDTO, Map<String, Object> attributes) {
-        this.providerUserId = providerUserId;
+    public PrincipalOAuth2User(UserDTO userDTO, Map<String, Object> attributes) {
         this.userDTO = userDTO;
         this.attributes = attributes;
     }
 
     // JWT 인증용(속성 없음)
-    public PrincipalOAuth2User(String providerUserId, UserDTO userDTO) {
-        this(providerUserId, userDTO, Map.of());
+    public PrincipalOAuth2User(UserDTO userDTO) {
+        this(userDTO, Map.of());
     }
 
     @Override
@@ -43,7 +42,11 @@ public class PrincipalOAuth2User implements OAuth2User {
         return userDTO.email();
     }
 
+    public Long getId() {
+        return userDTO.id();
+    }
+
     public String getProviderUserId() {
-        return providerUserId;
+        return userDTO.providerUserId();
     }
 }

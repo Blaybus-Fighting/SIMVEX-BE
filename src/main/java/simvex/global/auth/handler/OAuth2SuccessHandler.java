@@ -29,6 +29,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         //OAuth2User
         PrincipalOAuth2User principal  = (PrincipalOAuth2User) authentication.getPrincipal();
 
+        Long id = principal.getId();
         String providerUserId  = principal.getProviderUserId();
         String name = principal.getName();
         String email = principal.getEmail();
@@ -38,7 +39,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(providerUserId, name, email, role, tokenExpireMs);
+        String token = jwtUtil.createJwt(providerUserId, id, name, email, role, tokenExpireMs);
 
         response.addCookie(createCookie("Authorization", token, (int) (tokenExpireMs / 1000)));
 //        response.sendRedirect("http://localhost:3000/");

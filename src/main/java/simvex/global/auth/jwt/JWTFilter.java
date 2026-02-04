@@ -35,6 +35,7 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰이 없으면 다음 필터로 (인증이 필요한 경로는 authorizeHttpRequests에서 걸러짐)
         if (token == null) {
+            log.info("JWT 토큰이 쿠키에 없습니다! URL: {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -48,13 +49,15 @@ public class JWTFilter extends OncePerRequestFilter {
 
             JwtPayload payload = jwtUtil.parseAndValidate(token);
             UserDTO userDTO = new UserDTO(
+                    payload.id(),
+                    payload.providerUserId(),
                     payload.name(),
                     payload.email(),
                     payload.role()
             );
 
             //UserDetails에 회원 정보 객체 담기
-            PrincipalOAuth2User principalOAuth2User = new PrincipalOAuth2User(payload.providerUserId(), userDTO);
+            PrincipalOAuth2User principalOAuth2User = new PrincipalOAuth2User(userDTO);
 
             //스프링 시큐리티 인증 토큰 생성
             Authentication authentication  = new UsernamePasswordAuthenticationToken(principalOAuth2User, null, principalOAuth2User.getAuthorities());
@@ -75,6 +78,16 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
+        // 1. Authorization 헤더 확인
+        String header = request.getHeader("Authorization");
+        if (header != null) {
+            if (header.startsWith("Bearer ")) {
+                return header.substring(7);
+            }
+            return header; // Bearer 없이 토큰만 보낸 경우 대비
+        }
+
+        // 2. 헤더에 없다면 쿠키에서 찾기
         Cookie[] cookies = request.getCookies();
         if (cookies == null) return null;
 
