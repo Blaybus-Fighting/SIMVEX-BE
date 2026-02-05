@@ -22,6 +22,6 @@ public class Session extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "jsonb")
     private String viewData;
 }
