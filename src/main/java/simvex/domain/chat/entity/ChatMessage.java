@@ -1,4 +1,4 @@
-package simvex.domain.chathistory.entity;
+package simvex.domain.chat.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,10 +7,9 @@ import simvex.global.common.BaseEntity;
 
 @Getter
 @Entity
-@Builder(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChatHistory extends BaseEntity {
+public class ChatMessage extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,10 +20,19 @@ public class ChatHistory extends BaseEntity {
     @JoinColumn(name = "session_id", nullable = false)
     private Session session;
 
-
     @Column(columnDefinition = "text")
     private String message;
 
     @Enumerated(EnumType.STRING)
     private ChatRole role;
+
+    private ChatMessage(Session session, String message, ChatRole role) {
+        this.session = session;
+        this.message = message;
+        this.role = role;
+    }
+
+    public static ChatMessage create(Session session, String message, ChatRole role) {
+        return new ChatMessage(session, message, role);
+    }
 }

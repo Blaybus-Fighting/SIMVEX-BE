@@ -1,4 +1,4 @@
-package simvex.domain.chathistory.entity;
+package simvex.domain.chat.entity;
 
 import lombok.Getter;
 
