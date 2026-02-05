@@ -21,14 +21,14 @@ public class ModelObjectController {
 
     private final ModelObjectService modelObjectService;
 
-    @Operation(summary = "모델 객체 조회", description = "모델 객체 조회")
+    @Operation(summary = "모델 객체 조회")
     @GetMapping
     public ApiResponse<List<ModelObjectResponse>> getModelObjects() {
         List<ModelObjectResponse> responses = modelObjectService.getAllModelObjects();
         return ApiResponse.onSuccess(responses);
     }
 
-    @Operation(summary = "모델 객체 상세 조회", description = "모델 객체 상세 조회")
+    @Operation(summary = "모델 객체 상세 조회")
     @GetMapping("/{modelObjectId}")
     public ApiResponse<ModelObjectResponse> getModelObject(
             @PathVariable Long modelObjectId
