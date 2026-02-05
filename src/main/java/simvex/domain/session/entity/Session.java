@@ -13,6 +13,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import simvex.domain.modelobject.entity.ModelObject;
 import simvex.domain.user.entity.User;
 import simvex.global.common.BaseEntity;
 
@@ -23,6 +26,13 @@ import simvex.global.common.BaseEntity;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Session extends BaseEntity {
 
+    public static Session create(User user, ModelObject modelObject) {
+        return Session.builder()
+                .user(user)
+                .modelObject(modelObject)
+                .build();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
@@ -32,6 +42,11 @@ public class Session extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_object_id")
+    private ModelObject modelObject;
+
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String viewData;
 }
