@@ -1,6 +1,13 @@
 package simvex.domain.session.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,12 +24,14 @@ import simvex.global.common.BaseEntity;
 @Builder(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"user_id", "model_id"})
-        }
-)
 public class Session extends BaseEntity {
+
+    public static Session create(User user, ModelObject modelObject) {
+        return Session.builder()
+                .user(user)
+                .modelObject(modelObject)
+                .build();
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,32 +42,11 @@ public class Session extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "model_id", nullable = false)
-    private ModelObject model;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "model_object_id")
+    private ModelObject modelObject;
 
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private String viewData;
-
-    /* ====== 팩토리 메서드 ====== */
-
-    /** 신규 세션 생성 */
-    public static Session create(User user, ModelObject model, String viewData) {
-        return Session.builder()
-                .user(user)
-                .model(model)
-                .viewData(viewData)
-                .build();
-    }
-
-    /** 기존 세션 갱신 (setter 없이) */
-    public static Session update(Session existing, String viewData) {
-        return Session.builder()
-                .id(existing.getId())
-                .user(existing.getUser())
-                .model(existing.getModel())
-                .viewData(viewData)
-                .build();
-    }
 }
