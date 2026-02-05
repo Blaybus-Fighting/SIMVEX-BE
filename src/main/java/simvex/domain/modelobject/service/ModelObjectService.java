@@ -25,7 +25,6 @@ public class ModelObjectService {
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
 
-    @Transactional
     public List<ModelObjectResponse> getAllModelObjects() {
         return modelObjectRepository.findAll().stream()
                 .map(ModelObjectResponse::from)
@@ -37,19 +36,18 @@ public class ModelObjectService {
         PrincipalOAuth2User principal = (PrincipalOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long userId = principal.getId();
 
+        ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
+
         if (sessionRepository.findByUserIdAndModelObjectId(userId, modelObjectId).isEmpty()) {
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.UNAUTHORIZED));
-            
-            ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
+                    .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+
 
             Session newSession = Session.create(user, modelObject);
             sessionRepository.save(newSession);
         }
         
-        ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
-                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
         return ModelObjectResponse.from(modelObject);
     }
 }
