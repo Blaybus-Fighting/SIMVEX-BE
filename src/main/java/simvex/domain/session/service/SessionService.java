@@ -39,15 +39,19 @@ public class SessionService {
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
 
         Session session = sessionRepository.findByUserIdAndModelObjectId(user.getId(), modelId)
-                .map(existing ->
-                        Session.update(existing, req.viewData()))
+                .map(existing -> {
+                    existing.updateViewData(req.viewData());
+                    return existing;
+                })
                 .orElseGet(() -> Session.create(user, model));
 
-        Session saved = sessionRepository.save(session);
+        if (session.getId() == null) {
+            sessionRepository.save(session);
+        }
 
         return new SessionRes(
-                saved.getModelObject().getId(),
-                saved.getViewData()
+                session.getModelObject().getId(),
+                session.getViewData()
         );
     }
 }

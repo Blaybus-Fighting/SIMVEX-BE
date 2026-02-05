@@ -54,12 +54,7 @@ public class Session extends BaseEntity {
     }
 
     /** viewData 업데이트 **/
-    public static Session update(Session existing, String viewData) {
-        return Session.builder()
-                .id(existing.getId())
-                .user(existing.getUser())
-                .modelObject(existing.getModelObject())
-                .viewData(viewData)
-                .build();
+    public void updateViewData(String viewData) {
+        this.viewData = viewData;
     }
 }
