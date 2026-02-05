@@ -31,7 +31,10 @@ public enum ErrorCode {
     MODEL_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "MODEL_001", "모델을 찾을 수 없습니다."),
 
     // Part Exception
-    PART_NOT_FOUND(HttpStatus.NOT_FOUND, "PART_001", "부품을 찾을 수 없습니다.");
+    PART_NOT_FOUND(HttpStatus.NOT_FOUND, "PART_001", "부품을 찾을 수 없습니다."),
+
+    // Quiz Exception
+    QUIZ_NOT_FOUND(HttpStatus.NOT_FOUND, "QUIZ_001", "퀴즈를 찾을 수 없습니다.");
 
     private final HttpStatus status;    // HTTP 상태
     private final String code;          // API 응답에 사용할 커스텀 에러 코드 (HTTP 상태 코드와 동일하게)
