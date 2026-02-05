@@ -13,6 +13,7 @@ import simvex.domain.user.dto.JwtPayload;
 
 @Component
 public class JWTUtil {
+    private static final String CLAIM_ID = "id";
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_ROLE = "role";
     private static final String CLAIM_EMAIL = "email";
@@ -39,6 +40,7 @@ public class JWTUtil {
             throw new JwtException("Missing subject(providerUserId)");
         }
 
+        Long id = claims.get(CLAIM_ID, Long.class);
         String name = claims.get(CLAIM_NAME, String.class);
         String email = claims.get(CLAIM_EMAIL, String.class);
         String role = claims.get(CLAIM_ROLE, String.class);
@@ -47,14 +49,15 @@ public class JWTUtil {
             role = "ROLE_USER";
         }
 
-        return new JwtPayload(providerUserId, name, email, role);
+        return new JwtPayload(id, providerUserId, name, email, role);
 
     }
 
 
-    public String createJwt(String providerUserId, String name, String email, String role, Long expiredMs) {
+    public String createJwt(String providerUserId, Long id, String name, String email, String role, Long expiredMs) {
         return Jwts.builder()
                 .subject(providerUserId)
+                .claim(CLAIM_ID, id)
                 .claim(CLAIM_NAME, name)
                 .claim(CLAIM_EMAIL, email)
                 .claim(CLAIM_ROLE, role)
