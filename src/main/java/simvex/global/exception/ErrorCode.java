@@ -28,7 +28,10 @@ public enum ErrorCode {
     SESSION_ACCESS_DENIED(HttpStatus.FORBIDDEN, "SESSION_002", "세션 접근 권한이 없습니다."),
 
     // Model Exception
-    MODEL_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "MODEL_001", "모델을 찾을 수 없습니다.");
+    MODEL_OBJECT_NOT_FOUND(HttpStatus.NOT_FOUND, "MODEL_001", "모델을 찾을 수 없습니다."),
+
+    // Part Exception
+    PART_NOT_FOUND(HttpStatus.NOT_FOUND, "PART_001", "부품을 찾을 수 없습니다.");
 
     private final HttpStatus status;    // HTTP 상태
     private final String code;          // API 응답에 사용할 커스텀 에러 코드 (HTTP 상태 코드와 동일하게)
