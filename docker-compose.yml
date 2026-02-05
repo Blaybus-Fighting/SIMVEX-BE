@@ -19,6 +19,14 @@ services:
 
       # JWT
       - SPRING_JWT_SECRET=${JWT_SECRET}
+
+      # OpenAI
+      - OPEN_API_KEY=${OPEN_API_KEY}
+
+      # Qdrant
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - QDRANT_PORT=${QDRANT_PORT}
     expose:
       - "8080"
     volumes:
