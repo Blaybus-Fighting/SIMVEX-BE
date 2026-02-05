@@ -56,7 +56,7 @@ public class ChatService {
                 .call()
                 .content();
 
-        return ChatMessageDto.create(ChatRole.USER, content);
+        return ChatMessageDto.create(ChatRole.ASSISTANT, content);
     }
 
     public SseEmitter streamRagChat(ChatRequestDto chatRequestDto) {
@@ -110,7 +110,10 @@ public class ChatService {
         return emitter;
     }
 
-    public Slice<ChatMessageDto> findMessages(Long sessionId, int page) {
+    public Slice<ChatMessageDto> findMessages(Long userId, Long sessionId, int page) {
+        if (!sessionRepository.existsByUser_IdAndId(userId, sessionId)) {
+            throw new CustomException(ErrorCode.SESSION_ACCESS_DENIED);
+        }
         Pageable pageable = PageRequest.of(page, DEFAULT_PAGE_SIZE);
         Slice<ChatMessage> messageSlice = chatMessageRepository.findBySession_IdOrderByCreatedAt(sessionId, pageable);
         log.info("messages = {}", messageSlice);

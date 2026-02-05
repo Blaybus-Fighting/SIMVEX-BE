@@ -3,6 +3,8 @@ package simvex.domain.chat.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import simvex.domain.chat.dto.ChatMessageDto;
 import simvex.domain.chat.dto.ChatRequestDto;
 import simvex.domain.chat.service.ChatService;
+import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 import simvex.global.dto.ApiResponse;
 
 @RestController
@@ -36,8 +39,9 @@ public class ChatController {
     @Operation(summary = "대화 메시지 조회", description = "세션의 대화 메시지를 페이지 단위로 조회합니다.")
     public ApiResponse<Slice<ChatMessageDto>> getMessages(
             @PathVariable Long sessionId,
+            @AuthenticationPrincipal PrincipalOAuth2User principal,
             @RequestParam(defaultValue = "0") int page
     ) {
-        return ApiResponse.onSuccess(chatService.findMessages(sessionId, page));
+        return ApiResponse.onSuccess(chatService.findMessages(principal.getId(), sessionId, page));
     }
 }
