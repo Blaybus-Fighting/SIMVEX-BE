@@ -4,8 +4,10 @@ spring:
     group:
       dev:
         - "oauth"
+        - "llm"
       prod:
         - "oauth"
+        - "llm"
 
   # 공통 애플리케이션 설정
   application:

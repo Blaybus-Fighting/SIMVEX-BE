@@ -1,0 +1,18 @@
+spring:
+  ai:
+    model:
+      chat: openai
+    openai:
+      api-key: ${OPEN_API_KEY}
+      chat:
+        options:
+          model: gpt-5-mini
+          temperature: 1
+      embedding:
+        options:
+          model: text-embedding-3-small
+
+qdrant:
+  api-key: ${QDRANT_API_KEY}
+  host: ${QDRANT_HOST}
+  port: ${QDRANT_PORT}

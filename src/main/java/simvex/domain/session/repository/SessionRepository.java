@@ -8,4 +8,6 @@ public interface SessionRepository extends JpaRepository<Session, Long> {
     Optional<Session> findByIdAndUserId(Long id, Long userId);
 
     Optional<Session> findByUserIdAndModelObjectId(Long userId, Long modelObjectId);
+
+    boolean existsByUser_IdAndId(Long userId, Long sessionId);
 }
