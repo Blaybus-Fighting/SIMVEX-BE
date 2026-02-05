@@ -22,10 +22,10 @@ public class SessionService {
 
     // 세션 조회
     public SessionRes getSession(User user, Long modelId) {
-        Session session = sessionRepository.findByUserIdAndModelId(user.getId(), modelId)
+        Session session = sessionRepository.findByUserIdAndModelObjectId(user.getId(), modelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
-        return new SessionRes(session.getModel().getId(), session.getViewData());
+        return new SessionRes(session.getModelObject().getId(), session.getViewData());
     }
 
     /**
@@ -38,12 +38,16 @@ public class SessionService {
         ModelObject model = modelRepository.findById(modelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
 
-        Session session = sessionRepository.findByUserIdAndModelId(user.getId(), modelId)
-                .map(existing -> Session.update(existing, req.viewData()))
-                .orElse(Session.create(user, model, req.viewData()));
+        Session session = sessionRepository.findByUserIdAndModelObjectId(user.getId(), modelId)
+                .map(existing ->
+                        Session.update(existing, req.viewData()))
+                .orElseGet(() -> Session.create(user, model));
 
         Session saved = sessionRepository.save(session);
 
-        return new SessionRes(saved.getModel().getId(), saved.getViewData());
+        return new SessionRes(
+                saved.getModelObject().getId(),
+                saved.getViewData()
+        );
     }
 }
