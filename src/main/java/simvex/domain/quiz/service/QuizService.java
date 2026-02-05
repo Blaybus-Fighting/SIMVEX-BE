@@ -33,14 +33,14 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
 
-        boolean correct = quiz.getAnswer().trim().equals(req.answer().trim());
+        boolean correct = quiz.getAnswer().trim().equalsIgnoreCase(req.answer().trim());
         return new QuizResultRes(correct);
     }
 
     // 퀴즈 생성 - 관리자용
     public QuizCreateRes createQuiz(QuizCreateReq req) {
         ModelObject model = modelObjectRepository.findById(req.modelId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
 
         Quiz quiz = Quiz.create(
                 model,

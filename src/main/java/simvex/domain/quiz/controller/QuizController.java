@@ -8,7 +8,7 @@ import simvex.global.dto.ApiResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/quiz")
+@RequestMapping("/api/quizzes")
 public class QuizController {
 
     private final QuizService quizService;
