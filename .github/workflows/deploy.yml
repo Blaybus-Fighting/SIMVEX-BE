@@ -89,6 +89,14 @@ jobs:
             
             # JWT
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+
+            # OpenAI
+            echo "OPEN_API_KEY=${{ secrets.OPEN_API_KEY }}" >> .env
+
+            # Qdrant
+            echo "QDRANT_HOST=${{ secrets.QDRANT_HOST }}" >> .env
+            echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+            echo "QDRANT_PORT=${{ secrets.QDRANT_PORT }}" >> .env
             
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
@@ -121,6 +129,14 @@ jobs:
             
             # JWT
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+
+            # OpenAI
+            echo "OPEN_API_KEY=${{ secrets.OPEN_API_KEY }}" >> .env
+
+            # Qdrant
+            echo "QDRANT_HOST=${{ secrets.QDRANT_HOST }}" >> .env
+            echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
+            echo "QDRANT_PORT=${{ secrets.QDRANT_PORT }}" >> .env
 
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
