@@ -18,10 +18,6 @@ public class ModelObject extends BaseEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "session_id", nullable = false)
-    private Session session;
-
     private String name;
 
     private String description;
