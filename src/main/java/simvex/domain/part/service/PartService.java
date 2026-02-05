@@ -3,6 +3,7 @@ package simvex.domain.part.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import simvex.domain.part.dto.PartResponse;
 import simvex.domain.part.entity.Part;
 import simvex.domain.part.repository.PartRepository;
@@ -12,6 +13,7 @@ import simvex.global.exception.ErrorCode;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PartService {
     private final PartRepository partRepository;
     private final ModelObjectRepository modelObjectRepository;
