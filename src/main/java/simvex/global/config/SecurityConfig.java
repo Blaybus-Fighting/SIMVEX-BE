@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import simvex.global.auth.handler.CustomAuthenticationEntryPoint;
 import simvex.global.auth.jwt.JWTFilter;
 import simvex.global.auth.jwt.JWTUtil;
 import simvex.global.auth.handler.OAuth2FailureHandler;
@@ -27,6 +28,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final JWTUtil jwtUtil;
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -47,10 +49,14 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)
                         .failureHandler(oAuth2FailureHandler))
 
+                .exceptionHandling(conf -> conf
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                )
+
                 //경로별 인가 작업
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/oauth/success", "/login/**", "/oauth2/**").permitAll()
+                                "/", "/oauth/success", "/oauth/fail", "/login/**", "/oauth2/**", "/auth/logout").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
