@@ -1,5 +1,7 @@
 package simvex.domain.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import simvex.global.dto.ApiResponse;
 import simvex.global.exception.ErrorCode;
 
+@Tag(name = "Auth API", description = "인증 API")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
