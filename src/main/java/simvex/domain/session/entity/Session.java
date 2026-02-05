@@ -26,13 +26,6 @@ import simvex.global.common.BaseEntity;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Session extends BaseEntity {
 
-    public static Session create(User user, ModelObject modelObject) {
-        return Session.builder()
-                .user(user)
-                .modelObject(modelObject)
-                .build();
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false)
@@ -49,4 +42,19 @@ public class Session extends BaseEntity {
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private String viewData;
+
+    /* ====== 팩토리 메서드 ====== */
+
+    /** 세션 최초 생성 (viewData 없음) */
+    public static Session create(User user, ModelObject modelObject) {
+        return Session.builder()
+                .user(user)
+                .modelObject(modelObject)
+                .build();
+    }
+
+    /** viewData 업데이트 **/
+    public void updateViewData(String viewData) {
+        this.viewData = viewData;
+    }
 }
