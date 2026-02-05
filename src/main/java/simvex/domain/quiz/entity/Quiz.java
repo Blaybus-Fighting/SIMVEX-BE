@@ -24,4 +24,13 @@ public class Quiz extends BaseEntity {
     private String question;
 
     private String answer;
+
+    // 퀴즈 생성 메서드
+    public static Quiz create(ModelObject model, String question, String answer) {
+        return Quiz.builder()
+                .model(model)
+                .question(question)
+                .answer(answer)
+                .build();
+    }
 }
