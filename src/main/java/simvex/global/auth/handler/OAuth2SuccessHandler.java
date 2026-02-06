@@ -21,6 +21,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${spring.jwt.access-token-expiration-ms}")
     private long tokenExpireMs;
     private final JWTUtil jwtUtil;
+    @Value("${app.frontend-url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -42,8 +44,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String token = jwtUtil.createJwt(providerUserId, id, name, email, role, tokenExpireMs);
 
         response.addCookie(createCookie("Authorization", token, (int) (tokenExpireMs / 1000)));
-//        response.sendRedirect("http://localhost:3000/");
-        response.sendRedirect("/oauth/success");
+        response.sendRedirect(frontendUrl);
     }
 
     private Cookie createCookie(String key, String value, int maxAge) {
