@@ -15,6 +15,7 @@ import simvex.domain.user.repository.UserRepository;
 import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 import simvex.global.exception.CustomException;
 import simvex.global.exception.ErrorCode;
+import simvex.global.infra.s3.S3Service;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +25,15 @@ public class ModelObjectService {
     private final ModelObjectRepository modelObjectRepository;
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     public List<ModelObjectResponse> getAllModelObjects() {
         return modelObjectRepository.findAll().stream()
-                .map(ModelObjectResponse::from)
+                .map(model -> {
+                    String presignedUrl = s3Service.getPresignedUrl(model.getThumbnailUrl());
+
+                    return ModelObjectResponse.from(model, presignedUrl);
+                })
                 .toList();
     }
 
@@ -47,7 +53,9 @@ public class ModelObjectService {
             Session newSession = Session.create(user, modelObject);
             sessionRepository.save(newSession);
         }
-        
-        return ModelObjectResponse.from(modelObject);
+
+        String presignedUrl = s3Service.getPresignedUrl(modelObject.getThumbnailUrl());
+
+        return ModelObjectResponse.from(modelObject, presignedUrl);
     }
 }
