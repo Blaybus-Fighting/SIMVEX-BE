@@ -15,13 +15,13 @@ public class PartResponse {
     private String modelUrl;
     private String localCoordinates;
 
-    public static PartResponse from(Part part, String presignedUrl){
+    public static PartResponse from(Part part){
         return PartResponse.builder()
                 .id(part.getId())
                 .name(part.getName())
                 .material(part.getMaterial())
                 .roleDescription(part.getRoleDescription())
-                .modelUrl(presignedUrl)
+                .modelUrl(part.getModelUrl())
                 .localCoordinates(part.getLocalCoordinates())
                 .build();
     }
