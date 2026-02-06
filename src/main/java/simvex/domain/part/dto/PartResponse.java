@@ -1,4 +1,4 @@
-package simvex.domain.part.repository;
+package simvex.domain.part.dto;
 
 import lombok.Builder;
 import lombok.Getter;
