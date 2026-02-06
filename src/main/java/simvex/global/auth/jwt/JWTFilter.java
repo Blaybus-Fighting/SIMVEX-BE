@@ -31,7 +31,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = extractToken(request);
+        String token = JWTUtil.extractToken(request);
 
         // 토큰이 없으면 다음 필터로 (인증이 필요한 경로는 authorizeHttpRequests에서 걸러짐)
         if (token == null) {
@@ -74,27 +74,6 @@ public class JWTFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private String extractToken(HttpServletRequest request) {
-        // 1. Authorization 헤더 확인
-        String header = request.getHeader("Authorization");
-        if (header != null) {
-            if (header.startsWith("Bearer ")) {
-                return header.substring(7);
-            }
-            return header; // Bearer 없이 토큰만 보낸 경우 대비
-        }
-
-        // 2. 헤더에 없다면 쿠키에서 찾기
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return null;
-
-        return Arrays.stream(cookies)
-                .filter(cookie -> "Authorization".equals(cookie.getName()))
-                .map(Cookie::getValue)
-                .findFirst()
-                .orElse(null);
     }
 
     @Override

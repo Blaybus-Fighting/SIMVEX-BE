@@ -7,12 +7,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import simvex.global.auth.filter.SseAuthenticationFilter;
 import simvex.global.auth.handler.CustomAuthenticationEntryPoint;
 import simvex.global.auth.jwt.JWTFilter;
 import simvex.global.auth.jwt.JWTUtil;
@@ -27,6 +29,7 @@ public class SecurityConfig {
     private final PrincipalOAuth2UserService principalOAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2FailureHandler oAuth2FailureHandler;
+    private final SseAuthenticationFilter sseAuthenticationFilter;
     private final JWTUtil jwtUtil;
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
@@ -34,14 +37,15 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf((auth) -> auth.disable())
-                .formLogin((auth) -> auth.disable())
-                .httpBasic((auth) -> auth.disable())
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 // JWT 필터를 OAuth2 로그인 필터 이전에 배치
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(sseAuthenticationFilter, JWTFilter.class)
 
                 //oauth2
                 .oauth2Login((oauth2) -> oauth2
