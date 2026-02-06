@@ -1,4 +1,4 @@
-package simvex.domain.part.dto;
+package simvex.domain.part.repository;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +15,13 @@ public class PartResponse {
     private String modelUrl;
     private String localCoordinates;
 
-    public static PartResponse from(Part part){
+    public static PartResponse from(Part part, String presignedUrl){
         return PartResponse.builder()
                 .id(part.getId())
                 .name(part.getName())
                 .material(part.getMaterial())
                 .roleDescription(part.getRoleDescription())
-                .modelUrl(part.getModelUrl())
+                .modelUrl(presignedUrl)
                 .localCoordinates(part.getLocalCoordinates())
                 .build();
     }
