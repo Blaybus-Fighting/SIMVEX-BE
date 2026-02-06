@@ -27,7 +27,10 @@ public class ModelObjectService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
-    public List<ModelObjectResponse> getAllModelObjects() {
+    public List<ModelObjectResponse> getAllModelObjects(Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         return modelObjectRepository.findAll().stream()
                 .map(model -> {
                     String presignedUrl = s3Service.getPresignedUrl(model.getThumbnailUrl());
@@ -38,9 +41,9 @@ public class ModelObjectService {
     }
 
     @Transactional
-    public ModelObjectResponse getModelObjectDetail(Long modelObjectId) {
-        PrincipalOAuth2User principal = (PrincipalOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long userId = principal.getId();
+    public ModelObjectResponse getModelObjectDetail(Long modelObjectId, Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));

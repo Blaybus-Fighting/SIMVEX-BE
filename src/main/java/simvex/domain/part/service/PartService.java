@@ -9,6 +9,7 @@ import simvex.domain.part.dto.PartResponse;
 import simvex.domain.part.entity.Part;
 import simvex.domain.part.repository.PartRepository;
 import simvex.domain.modelobject.repository.ModelObjectRepository;
+import simvex.domain.user.repository.UserRepository;
 import simvex.global.exception.CustomException;
 import simvex.global.exception.ErrorCode;
 import simvex.global.infra.s3.S3Service;
@@ -20,8 +21,12 @@ public class PartService {
     private final PartRepository partRepository;
     private final ModelObjectRepository modelObjectRepository;
     private final S3Service s3Service;
+    private final UserRepository userRepository;
 
-    public List<PartResponse> getAllParts(){
+    public List<PartResponse> getAllParts(Long userId){
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         return partRepository.findAll().stream()
                 .map(part -> {
                     String presignedUrl = s3Service.getPresignedUrl(part.getModelUrl());
@@ -31,7 +36,10 @@ public class PartService {
                 .toList();
     }
 
-    public List<PartResponse> getPartsByModelId(Long modelId) {
+    public List<PartResponse> getPartsByModelId(Long modelId, Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         if (!modelObjectRepository.existsById(modelId)) {
             throw new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND);
         }
@@ -45,7 +53,10 @@ public class PartService {
                 .toList();
     }
 
-    public PartResponse getPart(Long id) {
+    public PartResponse getPart(Long id, Long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Part part = partRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.PART_NOT_FOUND));
         String presignedUrl = s3Service.getPresignedUrl(part.getModelUrl());
