@@ -13,12 +13,12 @@ public class ModelObjectResponse {
     private String thumbnailUrl;
     private String systemPrompt;
 
-    public static ModelObjectResponse from(ModelObject modelObject) {
+    public static ModelObjectResponse from(ModelObject modelObject, String presignedUrl) {
         return ModelObjectResponse.builder()
                 .id(modelObject.getId())
                 .name(modelObject.getName())
                 .description(modelObject.getDescription())
-                .thumbnailUrl(modelObject.getThumbnailUrl())
+                .thumbnailUrl(presignedUrl)
                 .systemPrompt(modelObject.getSystemPrompt())
                 .build();
     }

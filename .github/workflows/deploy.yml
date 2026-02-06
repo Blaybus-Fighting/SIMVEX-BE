@@ -98,6 +98,10 @@ jobs:
             echo "QDRANT_API_KEY=${{ secrets.QDRANT_API_KEY }}" >> .env
             echo "QDRANT_PORT=${{ secrets.QDRANT_PORT }}" >> .env
             
+            # AWS
+            echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
+            echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+            
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
             docker compose up -d
