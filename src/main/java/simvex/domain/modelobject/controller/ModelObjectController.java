@@ -5,14 +5,12 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import simvex.domain.modelobject.dto.ModelObjectResponse;
 import simvex.domain.modelobject.service.ModelObjectService;
-import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 import simvex.global.dto.ApiResponse;
 
 @Tag(name = "Model Object API", description = "모델 객체 API")
@@ -25,24 +23,17 @@ public class ModelObjectController {
 
     @Operation(summary = "모델 객체 조회")
     @GetMapping
-    public ApiResponse<List<ModelObjectResponse>> getModelObjects(
-            @AuthenticationPrincipal PrincipalOAuth2User principal
-    ) {
-        Long userId = principal.getId();
-
-        List<ModelObjectResponse> responses = modelObjectService.getAllModelObjects(userId);
+    public ApiResponse<List<ModelObjectResponse>> getModelObjects() {
+        List<ModelObjectResponse> responses = modelObjectService.getAllModelObjects();
         return ApiResponse.onSuccess(responses);
     }
 
     @Operation(summary = "모델 객체 상세 조회")
     @GetMapping("/{modelObjectId}")
     public ApiResponse<ModelObjectResponse> getModelObject(
-            @PathVariable Long modelObjectId,
-            @AuthenticationPrincipal PrincipalOAuth2User principal
+            @PathVariable Long modelObjectId
     ) {
-        Long userId = principal.getId();
-
-        ModelObjectResponse response = modelObjectService.getModelObjectDetail(modelObjectId, userId);
+        ModelObjectResponse response = modelObjectService.getModelObjectDetail(modelObjectId);
         return ApiResponse.onSuccess(response);
     }
 }

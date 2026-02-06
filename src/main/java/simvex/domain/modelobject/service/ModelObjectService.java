@@ -15,7 +15,6 @@ import simvex.domain.user.repository.UserRepository;
 import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 import simvex.global.exception.CustomException;
 import simvex.global.exception.ErrorCode;
-import simvex.global.infra.s3.S3Service;
 
 @Service
 @RequiredArgsConstructor
@@ -25,25 +24,17 @@ public class ModelObjectService {
     private final ModelObjectRepository modelObjectRepository;
     private final SessionRepository sessionRepository;
     private final UserRepository userRepository;
-    private final S3Service s3Service;
 
-    public List<ModelObjectResponse> getAllModelObjects(Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
+    public List<ModelObjectResponse> getAllModelObjects() {
         return modelObjectRepository.findAll().stream()
-                .map(model -> {
-                    String presignedUrl = s3Service.getPresignedUrl(model.getThumbnailUrl());
-
-                    return ModelObjectResponse.from(model, presignedUrl);
-                })
+                .map(ModelObjectResponse::from)
                 .toList();
     }
 
     @Transactional
-    public ModelObjectResponse getModelObjectDetail(Long modelObjectId, Long userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public ModelObjectResponse getModelObjectDetail(Long modelObjectId) {
+        PrincipalOAuth2User principal = (PrincipalOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = principal.getId();
 
         ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
@@ -56,9 +47,7 @@ public class ModelObjectService {
             Session newSession = Session.create(user, modelObject);
             sessionRepository.save(newSession);
         }
-
-        String presignedUrl = s3Service.getPresignedUrl(modelObject.getThumbnailUrl());
-
-        return ModelObjectResponse.from(modelObject, presignedUrl);
+        
+        return ModelObjectResponse.from(modelObject);
     }
 }

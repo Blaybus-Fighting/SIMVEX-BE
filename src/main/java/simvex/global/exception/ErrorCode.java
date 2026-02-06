@@ -19,7 +19,6 @@ public enum ErrorCode {
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "AUTH_001", "토큰이 만료되었습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_002", "유효하지 않은 토큰입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH_003", "로그인이 필요합니다."),
-    USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "AUTH_004", "해당 유저를 찾을수 없습니다."),
 
     // Memo Exception
     MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMO_001", "메모를 찾을 수 없습니다."),
