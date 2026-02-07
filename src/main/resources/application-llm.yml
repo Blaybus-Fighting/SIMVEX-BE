@@ -11,8 +11,12 @@ spring:
       embedding:
         options:
           model: text-embedding-3-small
+    prompt:
+      system-path: classpath:prompts/system-prompt.txt
 
 qdrant:
   api-key: ${QDRANT_API_KEY}
   host: ${QDRANT_HOST}
   port: ${QDRANT_PORT}
+
+ai:

@@ -43,7 +43,10 @@ public enum ErrorCode {
     QDRANT_COMMUNICATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "VECTOR_003", "벡터 저장소와 통신 중 오류가 발생했습니다."),
     VECTOR_INVALID_ARGUMENT(HttpStatus.BAD_REQUEST, "VECTOR_004", "벡터 요청 파라미터가 올바르지 않습니다."),
     VECTOR_STORE_INITIALIZATION_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "VECTOR_005", "벡터 저장소 클라이언트 초기화에 실패했습니다."),
-    VECTOR_INGEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "VECTOR_006", "벡터 데이터 적재 중 오류가 발생했습니다.");
+    VECTOR_INGEST_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "VECTOR_006", "벡터 데이터 적재 중 오류가 발생했습니다."),
+
+    // Resource
+    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "RESOURCE_001", "리소스를 찾을 수 없습니다.");
 
     private final HttpStatus status;    // HTTP 상태
     private final String code;          // API 응답에 사용할 커스텀 에러 코드 (HTTP 상태 코드와 동일하게)
