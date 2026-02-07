@@ -11,5 +11,6 @@ spring:
             scope:
               - email
               - profile
-      login:
-        redirect-uri: ${FRONT_URL}
+login:
+  success:
+    redirect-uri: ${FRONT_URL}
