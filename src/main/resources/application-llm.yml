@@ -16,3 +16,7 @@ qdrant:
   api-key: ${QDRANT_API_KEY}
   host: ${QDRANT_HOST}
   port: ${QDRANT_PORT}
+
+ai:
+  prompt:
+    system-path: classpath:prompts/system-prompt.txt
