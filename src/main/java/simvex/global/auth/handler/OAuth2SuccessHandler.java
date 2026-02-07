@@ -23,7 +23,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${spring.jwt.access-token-expiration-ms}")
     private long tokenExpireMs;
 
-    @Value("${spring.security.oauth2.login.redirect-uri}")
+    @Value("${login.success.redirect-uri}")
     private String frontendUrl;
 
     private final JWTUtil jwtUtil;
