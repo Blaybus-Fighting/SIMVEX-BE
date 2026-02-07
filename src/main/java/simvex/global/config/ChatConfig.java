@@ -22,12 +22,11 @@ import java.nio.charset.StandardCharsets;
 public class ChatConfig {
 
     private final ResourceLoader resourceLoader;
+    private final String systemPromptsPath;
 
-    @Value("${ai.prompt.system-path}")
-    private String systemPromptsPath;
-
-    public ChatConfig(ResourceLoader resourceLoader) {
+    public ChatConfig(ResourceLoader resourceLoader, @Value("${spring.ai.prompt.system-path}") String systemPromptsPath) {
         this.resourceLoader = resourceLoader;
+        this.systemPromptsPath = systemPromptsPath;
     }
 
     @Bean
@@ -50,19 +49,21 @@ public class ChatConfig {
     }
 
     private String resolveSystemPrompt() {
-        if (systemPromptsPath != null) {
+        if (systemPromptsPath != null && !systemPromptsPath.isBlank()) {
             try {
                 Resource resource = resourceLoader.getResource(systemPromptsPath);
-                if (resource.exists()) {
-                    byte[] bytes = resource.getInputStream().readAllBytes();
-                    return new String(bytes, StandardCharsets.UTF_8);
+                if (!resource.exists()) {
+                    log.error("System prompt resource가 해당 경로에 존재하지 않습니다!: {}", systemPromptsPath);
+                    throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND);
+                }
+                try (var inputStream = resource.getInputStream()) {
+                    return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
                 }
             } catch (IOException e) {
-                log.error("Resoure 조회 에러! : {}", e.getMessage());
+                log.error("System prompt resource를 읽을 수 없습니다!: {}", systemPromptsPath, e);
                 throw new CustomException(ErrorCode.RESOURCE_NOT_FOUND);
             }
         }
-
         return "";
     }
 }
