@@ -21,7 +21,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Value("${spring.jwt.access-token-expiration-ms}")
     private long tokenExpireMs;
     private final JWTUtil jwtUtil;
-@Value("${app.frontend-url:/}")
+@Value("${FRONT_URL:/}")
     private String frontendUrl;
 
     @Override
