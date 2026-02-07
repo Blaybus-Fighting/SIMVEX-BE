@@ -102,10 +102,13 @@ jobs:
             echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
             echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
             
+            # FRONT
+            echo "FRONT_URL=${{ secrets.FRONT_URL_DEV }}" >> .env
+            
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
             docker compose up -d
-            
+
       # 메인 서버(Main) 배포
       - name: Deploy to Main Server
         if: github.ref == 'refs/heads/main'
@@ -145,6 +148,9 @@ jobs:
             # AWS
             echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
             echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
+            
+            # FRONT
+            echo "FRONT_URL=${{ secrets.FRONT_URL }}" >> .env
 
             # 최신 이미지 pull 및 컨테이너 재시작
             docker compose pull
