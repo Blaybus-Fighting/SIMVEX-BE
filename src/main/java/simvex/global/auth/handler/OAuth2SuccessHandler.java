@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,14 +16,18 @@ import org.springframework.stereotype.Component;
 import simvex.global.auth.jwt.JWTUtil;
 import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     @Value("${spring.jwt.access-token-expiration-ms}")
     private long tokenExpireMs;
-    private final JWTUtil jwtUtil;
-@Value("${FRONT_URL:/}")
+
+    @Value("${spring.security.oauth2.login.redirect-uri}")
     private String frontendUrl;
+
+    private final JWTUtil jwtUtil;
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -42,6 +47,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String role = auth.getAuthority();
 
         String token = jwtUtil.createJwt(providerUserId, id, name, email, role, tokenExpireMs);
+
+        log.info("Authentication Success - redirect://{}", frontendUrl);
 
         response.addCookie(createCookie("Authorization", token, (int) (tokenExpireMs / 1000)));
         response.sendRedirect(frontendUrl);
