@@ -31,6 +31,9 @@ services:
       # AWS
       - SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
+
+      # FRONT
+      - FRONT_URL=${FRONT_URL}
     expose:
       - "8080"
     volumes:
