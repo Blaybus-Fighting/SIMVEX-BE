@@ -1,6 +1,5 @@
 package simvex.global.auth.handler;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import simvex.global.auth.jwt.JWTUtil;
+import simvex.global.auth.ticket.AuthTicketService;
 import simvex.global.auth.oauth2.user.PrincipalOAuth2User;
 
 @Slf4j
@@ -27,6 +27,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private String frontendUrl;
 
     private final JWTUtil jwtUtil;
+    private final AuthTicketService authTicketService;
 
 
     @Override
@@ -50,17 +51,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         log.info("Authentication Success - redirect://{}", frontendUrl);
 
-        response.addCookie(createCookie("Authorization", token, (int) (tokenExpireMs / 1000)));
-        response.sendRedirect(frontendUrl);
-    }
-
-    private Cookie createCookie(String key, String value, int maxAge) {
-
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(maxAge);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
+        String ticket = authTicketService.issue(token);
+        response.sendRedirect(frontendUrl + "?ticket=" + ticket);
     }
 }
