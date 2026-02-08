@@ -14,3 +14,6 @@ spring:
 login:
   success:
     redirect-uri: ${FRONT_URL}
+  ticket:
+    ttl-seconds: 60
+    max-size: 10000
