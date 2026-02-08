@@ -45,7 +45,7 @@ public class AuthController {
 
     @PostMapping("/auth/exchange")
     public ApiResponse<AuthTokenResponse> exchangeTicket(@RequestBody @Valid AuthTicketExchangeRequest request) {
-        String token = authTicketService.consume(request.getTicket())
+        String token = authTicketService.consume(request.ticket())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
         return ApiResponse.onSuccess(new AuthTokenResponse(token));
