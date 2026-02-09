@@ -48,4 +48,8 @@ public class PrincipalOAuth2User implements OAuth2User {
     public String getProviderUserId() {
         return userDTO.providerUserId();
     }
+
+    public String getProfileImage() {
+        return userDTO.profileImage();
+    }
 }

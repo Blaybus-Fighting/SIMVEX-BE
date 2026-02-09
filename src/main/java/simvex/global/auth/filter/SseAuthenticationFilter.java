@@ -52,7 +52,8 @@ public class SseAuthenticationFilter extends OncePerRequestFilter {
                 payload.providerUserId(),
                 payload.name(),
                 payload.email(),
-                payload.role()
+                payload.role(),
+                null
         );
 
         //UserDetails에 회원 정보 객체 담기

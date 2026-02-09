@@ -51,7 +51,6 @@ public class JWTUtil {
         String name = claims.get(CLAIM_NAME, String.class);
         String email = claims.get(CLAIM_EMAIL, String.class);
         String role = claims.get(CLAIM_ROLE, String.class);
-
         if (role == null || role.isBlank()) {
             role = "ROLE_USER";
         }

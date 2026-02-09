@@ -1,5 +1,6 @@
 package simvex.domain.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -8,6 +9,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import simvex.domain.auth.dto.AuthTicketExchangeRequest;
 import simvex.domain.auth.dto.AuthTokenResponse;
+import simvex.domain.auth.dto.AuthUserResponse;
+import simvex.domain.user.dto.JwtPayload;
+import simvex.domain.user.entity.User;
+import simvex.domain.user.service.UserService;
+import simvex.global.auth.jwt.JWTUtil;
 import simvex.global.auth.ticket.AuthTicketService;
 import simvex.global.dto.ApiResponse;
 import simvex.global.exception.CustomException;
@@ -18,6 +24,8 @@ import simvex.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthTicketService authTicketService;
+    private final JWTUtil jwtUtil;
+    private final UserService userService;
 
     @GetMapping("/oauth/success")
     public ApiResponse<String> successAPI() {
@@ -43,11 +51,15 @@ public class AuthController {
         return ApiResponse.onSuccess("Logout Successful");
     }
 
+    @Operation(summary = "토큰 및 유저 정보", description = "티켓 교환을 통한 토큰 및 유저 정보 반환")
     @PostMapping("/auth/exchange")
     public ApiResponse<AuthTokenResponse> exchangeTicket(@RequestBody @Valid AuthTicketExchangeRequest request) {
         String token = authTicketService.consume(request.ticket())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
-        return ApiResponse.onSuccess(new AuthTokenResponse(token));
+        JwtPayload payload = jwtUtil.parseAndValidate(token);
+        User user = userService.findById(payload.id());
+        AuthUserResponse userResponse = new AuthUserResponse(user.getId(), user.getName(), user.getProfileImage());
+        return ApiResponse.onSuccess(new AuthTokenResponse(token, userResponse));
     }
 }
