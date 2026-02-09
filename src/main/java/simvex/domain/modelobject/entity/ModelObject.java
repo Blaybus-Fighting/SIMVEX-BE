@@ -2,7 +2,6 @@ package simvex.domain.modelobject.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import simvex.domain.session.entity.Session;
 import simvex.global.common.BaseEntity;
 
 @Getter
@@ -21,6 +20,10 @@ public class ModelObject extends BaseEntity {
     private String name;
 
     private String description;
+
+    private String usage;
+
+    private String mainTheory;
 
     private String thumbnailUrl;
 

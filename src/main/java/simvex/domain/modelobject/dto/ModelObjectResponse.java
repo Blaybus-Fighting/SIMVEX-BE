@@ -11,7 +11,8 @@ public class ModelObjectResponse {
     private String name;
     private String description;
     private String thumbnailUrl;
-    private String systemPrompt;
+    private String usage;
+    private String mainTheory;
 
     public static ModelObjectResponse from(ModelObject modelObject, String presignedUrl) {
         return ModelObjectResponse.builder()
@@ -19,7 +20,8 @@ public class ModelObjectResponse {
                 .name(modelObject.getName())
                 .description(modelObject.getDescription())
                 .thumbnailUrl(presignedUrl)
-                .systemPrompt(modelObject.getSystemPrompt())
+                .usage(modelObject.getUsage())
+                .mainTheory(modelObject.getMainTheory())
                 .build();
     }
 }
