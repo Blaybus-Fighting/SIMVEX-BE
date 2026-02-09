@@ -13,6 +13,11 @@ spring:
           model: text-embedding-3-small
     prompt:
       system-path: classpath:prompts/system-prompt.txt
+      empty-context-path: classpath:prompts/empty-context-prompt.txt
+    rag:
+      min-docs: 2
+      min-total-chars: 100
+      min-score: 0
 
 qdrant:
   api-key: ${QDRANT_API_KEY}
