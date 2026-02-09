@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  simvex-app:
+    image: ${DOCKERHUB_USERNAME}/simvex:${IMAGE_TAG}
+    container_name: simvex-server
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILE}
+
+      # Database (Neon PostgreSQL)
+      - SPRING_DATASOURCE_URL=${POSTGRES_URL}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+
+      # OAuth2 (Google)
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URL}
+
+      # JWT
+      - SPRING_JWT_SECRET=${JWT_SECRET}
+
+      # OpenAI
+      - OPEN_API_KEY=${OPEN_API_KEY}
+
+      # Qdrant
+      - QDRANT_HOST=${QDRANT_HOST}
+      - QDRANT_API_KEY=${QDRANT_API_KEY}
+      - QDRANT_PORT=${QDRANT_PORT}
+
+      # AWS
+      - SPRING_CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - SPRING_CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
+
+      # FRONT
+      - FRONT_URL=${FRONT_URL}
+    expose:
+      - "8080"
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - simvex-net
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/${SPRING_PROFILE}:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      - simvex-app
+    networks:
+      - simvex-net
+
+  # Certbot Service
+  certbot:
+    image: certbot/certbot
+    container_name: simvex-certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    networks:
+      - simvex-net
+
+networks:
+  simvex-net:
+    driver: bridge

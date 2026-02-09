@@ -1,0 +1,11 @@
+package simvex.domain.auth.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
+public class AuthTokenResponse {
+    private String accessToken;
+    private AuthUserResponse user;
+}
