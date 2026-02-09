@@ -67,7 +67,9 @@ public class ChatConfig {
             VectorStore vectorStore,
             @Value("${spring.ai.rag.min-docs:2}") int minDocs,
             @Value("${spring.ai.rag.min-total-chars:400}") int minTotalChars,
-            @Value("${spring.ai.rag.min-score:0}") double minScore
+            @Value("${spring.ai.rag.min-score:0}") double minScore,
+            @Value("${spring.ai.rag.retriever.top-k:6}") int topK,
+            @Value("${spring.ai.rag.retriever.similarity-threshold:0.5}") double similarityThreshold
     ) {
         String emptyContextPromptContext = resolvePrompt(emptyContextPromptsPath);
 
@@ -91,8 +93,8 @@ public class ChatConfig {
         DocumentRetriever retriever = new LoggingDocumentRetriever(
                 VectorStoreDocumentRetriever.builder()
                 .vectorStore(vectorStore)
-                .topK(6)
-                .similarityThreshold(0.50)
+                .topK(topK)
+                .similarityThreshold(similarityThreshold)
                 .build()
         );
 

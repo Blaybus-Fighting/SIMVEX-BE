@@ -31,12 +31,12 @@ public class LoggingDocumentRetriever implements DocumentRetriever {
 
         if (log.isInfoEnabled()) {
             Object filter = query.context().get(VectorStoreDocumentRetriever.FILTER_EXPRESSION);
-            log.info("VectorStore retrieved {} docs | query='{}' | filter={}",
+            log.debug("VectorStore retrieved {} docs | query='{}' | filter={}",
                     documents.size(), oneLine(query.text()), filter);
 
             for (int i = 0; i < documents.size(); i++) {
                 Document doc = documents.get(i);
-                log.info("VectorStore doc[{}] id={} score={} metadata={} text=\"{}\"",
+                log.debug("VectorStore doc[{}] id={} score={} metadata={} text=\"{}\"",
                         i, doc.getId(), doc.getScore(), doc.getMetadata(), preview(doc));
             }
         }

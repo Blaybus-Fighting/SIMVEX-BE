@@ -18,10 +18,11 @@ spring:
       min-docs: 2
       min-total-chars: 100
       min-score: 0
+      retriever:
+        top-k: 6
+        similarity-threshold: 0.5
 
 qdrant:
   api-key: ${QDRANT_API_KEY}
   host: ${QDRANT_HOST}
   port: ${QDRANT_PORT}
-
-ai:

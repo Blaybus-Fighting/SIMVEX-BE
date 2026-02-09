@@ -44,7 +44,11 @@ public class ChatService {
     private static final Long DEFAULT_TIMEOUT = 60L * 60L * 1000L; // 1시간
     private static final int DEFAULT_PAGE_SIZE = 10;
 
-    public ChatMessageDto ragChat(ChatRequestDto chatRequestDto) {
+    public ChatMessageDto ragChat(Long userId, ChatRequestDto chatRequestDto) {
+        if (chatRequestDto.sessionId() != null) {
+            sessionRepository.findByIdAndUserId(chatRequestDto.sessionId(), userId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        }
 
         String content = chatClient.prompt()
                 .user(chatRequestDto.question())
@@ -55,8 +59,8 @@ public class ChatService {
         return ChatMessageDto.create(ChatRole.ASSISTANT, content);
     }
 
-    public SseEmitter streamRagChat(ChatRequestDto chatRequestDto) {
-        Session session = sessionRepository.findById(chatRequestDto.sessionId())
+    public SseEmitter streamRagChat(Long userId, ChatRequestDto chatRequestDto) {
+        Session session = sessionRepository.findByIdAndUserId(chatRequestDto.sessionId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
         ChatMessage userMessage = ChatMessage.create(session, chatRequestDto.question(), ChatRole.USER);
