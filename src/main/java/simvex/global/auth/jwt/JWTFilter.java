@@ -53,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     payload.name(),
                     payload.email(),
                     payload.role(),
-                    payload.profileImage()
+                    null
             );
 
             //UserDetails에 회원 정보 객체 담기

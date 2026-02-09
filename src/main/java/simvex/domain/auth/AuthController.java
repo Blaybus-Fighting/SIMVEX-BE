@@ -11,6 +11,8 @@ import simvex.domain.auth.dto.AuthTicketExchangeRequest;
 import simvex.domain.auth.dto.AuthTokenResponse;
 import simvex.domain.auth.dto.AuthUserResponse;
 import simvex.domain.user.dto.JwtPayload;
+import simvex.domain.user.entity.User;
+import simvex.domain.user.service.UserService;
 import simvex.global.auth.jwt.JWTUtil;
 import simvex.global.auth.ticket.AuthTicketService;
 import simvex.global.dto.ApiResponse;
@@ -23,6 +25,7 @@ import simvex.global.exception.ErrorCode;
 public class AuthController {
     private final AuthTicketService authTicketService;
     private final JWTUtil jwtUtil;
+    private final UserService userService;
 
     @GetMapping("/oauth/success")
     public ApiResponse<String> successAPI() {
@@ -55,7 +58,8 @@ public class AuthController {
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
         JwtPayload payload = jwtUtil.parseAndValidate(token);
-        AuthUserResponse user = new AuthUserResponse(payload.id(), payload.name(), payload.profileImage());
-        return ApiResponse.onSuccess(new AuthTokenResponse(token, user));
+        User user = userService.findById(payload.id());
+        AuthUserResponse userResponse = new AuthUserResponse(user.getId(), user.getName(), user.getProfileImage());
+        return ApiResponse.onSuccess(new AuthTokenResponse(token, userResponse));
     }
 }
