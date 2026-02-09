@@ -1,8 +1,10 @@
 package simvex.domain.quiz.dto;
 
+import java.util.List;
+
 // 문제 조회 DTO
 public record QuizRes(
-        Long quizId,
-        String question
+        Long modelId,
+        List<QuizData> quizzes
 ) {
 }
