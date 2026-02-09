@@ -26,7 +26,7 @@ public class SessionController {
             @PathVariable Long modelId
             ) {
         return ApiResponse.onSuccess(
-                sessionService.getSession(user, modelId)
+                sessionService.getSession(user.getId(), modelId)
         );
     }
 
