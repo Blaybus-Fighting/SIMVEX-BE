@@ -21,7 +21,6 @@ import simvex.global.infra.s3.S3Service;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class ModelObjectService {
 
     private final ModelObjectRepository modelObjectRepository;
@@ -45,25 +44,23 @@ public class ModelObjectService {
 
     @Transactional
     public ModelObjectResponse getModelObjectDetail(Long modelObjectId, Long userId) {
-        userRepository.findById(userId)
+        // User 조회
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        log.info("modelObjext {} : ", modelObjectId);
+        // ModelObject 조회
         ModelObject modelObject = modelObjectRepository.findById(modelObjectId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
 
-        if (sessionRepository.findByUserIdAndModelObjectId(userId, modelObjectId).isEmpty()) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
-
-
-            Session newSession = Session.create(user, modelObject);
-            sessionRepository.save(newSession);
-        }
+        // Session 조회 및 없을 시 생성 (변수에 저장하여 재사용)
+        Session session = sessionRepository.findByUserIdAndModelObjectId(userId, modelObjectId)
+                .orElseGet(() -> {
+                    Session newSession = Session.create(user, modelObject);
+                    return sessionRepository.save(newSession);
+                });
 
         String presignedUrl = s3Service.getPresignedUrl(modelObject.getThumbnailUrl());
-        String viewData = sessionService.getSession(userId, modelObjectId).viewData();
 
-        return ModelObjectResponse.from(modelObject, presignedUrl, viewData);
+        return ModelObjectResponse.from(modelObject, presignedUrl, session.getViewData());
     }
 }
