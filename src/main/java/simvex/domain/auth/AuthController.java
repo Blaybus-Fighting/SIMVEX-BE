@@ -8,6 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import simvex.domain.auth.dto.AuthTicketExchangeRequest;
 import simvex.domain.auth.dto.AuthTokenResponse;
+import simvex.domain.auth.dto.AuthUserResponse;
+import simvex.domain.user.dto.JwtPayload;
+import simvex.global.auth.jwt.JWTUtil;
 import simvex.global.auth.ticket.AuthTicketService;
 import simvex.global.dto.ApiResponse;
 import simvex.global.exception.CustomException;
@@ -18,6 +21,7 @@ import simvex.global.exception.ErrorCode;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthTicketService authTicketService;
+    private final JWTUtil jwtUtil;
 
     @GetMapping("/oauth/success")
     public ApiResponse<String> successAPI() {
@@ -48,6 +52,8 @@ public class AuthController {
         String token = authTicketService.consume(request.ticket())
                 .orElseThrow(() -> new CustomException(ErrorCode.INVALID_TOKEN));
 
-        return ApiResponse.onSuccess(new AuthTokenResponse(token));
+        JwtPayload payload = jwtUtil.parseAndValidate(token);
+        AuthUserResponse user = new AuthUserResponse(payload.id(), payload.name(), payload.profileImage());
+        return ApiResponse.onSuccess(new AuthTokenResponse(token, user));
     }
 }
