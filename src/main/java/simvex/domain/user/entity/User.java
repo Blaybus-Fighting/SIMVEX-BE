@@ -30,6 +30,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column(columnDefinition = "text")
+    private String profileImage;
+
     private String role;
 
 }

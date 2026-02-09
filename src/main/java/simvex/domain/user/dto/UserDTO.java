@@ -5,5 +5,6 @@ public record UserDTO(
         String providerUserId,
         String name,
         String email,
-        String role
+        String role,
+        String profileImage
 ) {}

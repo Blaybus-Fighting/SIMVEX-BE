@@ -22,6 +22,7 @@ public class JWTUtil {
     private static final String CLAIM_NAME = "name";
     private static final String CLAIM_ROLE = "role";
     private static final String CLAIM_EMAIL = "email";
+    private static final String CLAIM_PROFILE_IMAGE = "profileImage";
 
     private static final String BEARER = "Bearer ";
 
@@ -51,23 +52,25 @@ public class JWTUtil {
         String name = claims.get(CLAIM_NAME, String.class);
         String email = claims.get(CLAIM_EMAIL, String.class);
         String role = claims.get(CLAIM_ROLE, String.class);
+        String profileImage = claims.get(CLAIM_PROFILE_IMAGE, String.class);
 
         if (role == null || role.isBlank()) {
             role = "ROLE_USER";
         }
 
-        return new JwtPayload(id, providerUserId, name, email, role);
+        return new JwtPayload(id, providerUserId, name, email, role, profileImage);
 
     }
 
 
-    public String createJwt(String providerUserId, Long id, String name, String email, String role, Long expiredMs) {
+    public String createJwt(String providerUserId, Long id, String name, String email, String role, String profileImage, Long expiredMs) {
         return Jwts.builder()
                 .subject(providerUserId)
                 .claim(CLAIM_ID, id)
                 .claim(CLAIM_NAME, name)
                 .claim(CLAIM_EMAIL, email)
                 .claim(CLAIM_ROLE, role)
+                .claim(CLAIM_PROFILE_IMAGE, profileImage)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)

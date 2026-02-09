@@ -45,6 +45,7 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
             user.setProviderUserId(providerUserId);
             user.setEmail(oAuth2Response.getEmail());
             user.setName(oAuth2Response.getName());
+            user.setProfileImage(oAuth2Response.getProfileImage());
             user.setRole("ROLE_USER");
 
             userRepository.save(user);
@@ -52,11 +53,22 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         else {
             user.setName(oAuth2Response.getName());
             user.setEmail(oAuth2Response.getEmail());
+            String profileImage = oAuth2Response.getProfileImage();
+            if (profileImage != null && !profileImage.isBlank()) {
+                user.setProfileImage(profileImage);
+            }
 
             userRepository.save(user);
         }
 
-        UserDTO userDTO = new UserDTO(user.getId(), user.getProviderUserId(), user.getName(), user.getEmail(), user.getRole());
+        UserDTO userDTO = new UserDTO(
+                user.getId(),
+                user.getProviderUserId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                user.getProfileImage()
+        );
         return new PrincipalOAuth2User(userDTO, oAuth2User.getAttributes());
     }
 }

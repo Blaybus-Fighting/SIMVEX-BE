@@ -41,13 +41,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String providerUserId  = principal.getProviderUserId();
         String name = principal.getName();
         String email = principal.getEmail();
+        String profileImage = principal.getProfileImage();
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(providerUserId, id, name, email, role, tokenExpireMs);
+        String token = jwtUtil.createJwt(providerUserId, id, name, email, role, profileImage, tokenExpireMs);
 
         log.info("Authentication Success - redirect://{}", frontendUrl);
 

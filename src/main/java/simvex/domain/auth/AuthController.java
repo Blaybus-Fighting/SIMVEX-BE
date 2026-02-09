@@ -1,5 +1,6 @@
 package simvex.domain.auth;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -47,6 +48,7 @@ public class AuthController {
         return ApiResponse.onSuccess("Logout Successful");
     }
 
+    @Operation(summary = "토큰 및 유저 정보", description = "티켓 교환을 통한 토큰 및 유저 정보 반환")
     @PostMapping("/auth/exchange")
     public ApiResponse<AuthTokenResponse> exchangeTicket(@RequestBody @Valid AuthTicketExchangeRequest request) {
         String token = authTicketService.consume(request.ticket())
