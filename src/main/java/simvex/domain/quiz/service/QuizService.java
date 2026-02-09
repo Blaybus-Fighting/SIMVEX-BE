@@ -10,6 +10,11 @@ import simvex.domain.quiz.repository.QuizRepository;
 import simvex.global.exception.CustomException;
 import simvex.global.exception.ErrorCode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class QuizService {
@@ -18,40 +23,58 @@ public class QuizService {
     private final ModelObjectRepository modelObjectRepository;
 
     // 퀴즈 조회
-    public QuizRes getRandomQuiz(Long modelId) {
-        Quiz quiz = quizRepository.findRandomByModelId(modelId)
-                .orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
+    public QuizRes getQuizzesByModel(Long modelId) {
+        List<Quiz> quizList = quizRepository.findAllByModelId(modelId);
 
-        return new QuizRes(
-                quiz.getId(),
-                quiz.getQuestion()
-        );
+        List<QuizData> quizDataList = quizList.stream()
+                .map(quiz -> new QuizData(
+                        quiz.getId(),
+                        quiz.getQuestion(),
+                        quiz.getOptions(),
+                        quiz.getAnswer(),
+                        quiz.getExplanation()
+                ))
+                .toList();
+
+        return new QuizRes(modelId, quizDataList);
     }
 
-    // 퀴즈 정답 채점
-    public QuizResultRes checkAnswer(Long quizId, QuizAnswerReq req) {
-        Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new CustomException(ErrorCode.QUIZ_NOT_FOUND));
+//    // 퀴즈 정답 채점
+//    public QuizResultRes checkAnswer(Long modelId, List<QuizAnswerReq> answerReqs) {
+//        Map<Long, Integer> answerMap = quizRepository.findAllByModelId(modelId).stream()
+//                .collect(Collectors.toMap(Quiz::getId, Quiz::getAnswer));
+//
+//        int correctCount = 0;
+//        List<Boolean> details = new ArrayList<>();
+//
+//        for (QuizAnswerReq req : answerReqs) {
+//            Integer correctAnswer = answerMap.get(req.quizId());
+//
+//            boolean isCorrect = correctAnswer != null &&
+//                    correctAnswer == req.selectedAnswer();
+//
+//            if (isCorrect) correctCount++;
+//            details.add(isCorrect);
+//        }
+//
+//        return new QuizResultRes(answerMap.size(), correctCount, details);
+//    }
 
-        boolean correct = quiz.getAnswer().trim().equalsIgnoreCase(req.answer().trim());
-        return new QuizResultRes(correct);
-    }
-
-    // 퀴즈 생성 - 관리자용
-    public QuizCreateRes createQuiz(QuizCreateReq req) {
-        ModelObject model = modelObjectRepository.findById(req.modelId())
-                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
-
-        Quiz quiz = Quiz.create(
-                model,
-                req.question(),
-                req.answer()
-        );
-
-        quizRepository.save(quiz);
-
-        return new QuizCreateRes(quiz.getId());
-    }
+//    // 퀴즈 생성 - 관리자용
+//    public QuizCreateRes createQuiz(QuizCreateReq req) {
+//        ModelObject model = modelObjectRepository.findById(req.modelId())
+//                .orElseThrow(() -> new CustomException(ErrorCode.MODEL_OBJECT_NOT_FOUND));
+//
+//        Quiz quiz = Quiz.create(
+//                model,
+//                req.question(),
+//                req.answer()
+//        );
+//
+//        quizRepository.save(quiz);
+//
+//        return new QuizCreateRes(quiz.getId());
+//    }
 
 
 }
