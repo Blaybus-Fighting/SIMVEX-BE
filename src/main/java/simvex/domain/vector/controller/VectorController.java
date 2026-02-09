@@ -4,13 +4,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import simvex.domain.vector.ingest.model.MachineCatalogItem;
 import simvex.domain.vector.api.TextIngestRequest;
 import simvex.domain.vector.api.UpdatePayloadRequest;
 import simvex.domain.vector.service.PointService;
+import simvex.domain.vector.service.MachineCatalogIngestService;
 import simvex.domain.vector.service.VectorIngestService;
 import simvex.domain.vector.utils.PayloadConverter;
 import simvex.global.dto.ApiResponse;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +23,7 @@ public class VectorController {
 
     private final VectorIngestService ingestService;
     private final PointService pointService;
+    private final MachineCatalogIngestService catalogIngestService;
 
     @PostMapping(value = "/text", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<Void> ingestText(@Valid @RequestBody TextIngestRequest request) {
@@ -40,5 +44,15 @@ public class VectorController {
     public ApiResponse<Void> createPayloadIndex(@RequestParam String index) {
         pointService.createPayloadIndex(index);
         return ApiResponse.onSuccess();
+    }
+
+    @PostMapping(value = "/catalog", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<Map<String, Integer>> ingestCatalog(
+            @RequestBody List<MachineCatalogItem> items,
+            @RequestParam(defaultValue = "seed_json") String source,
+            @RequestParam(defaultValue = "1") int version
+    ) {
+        int ingested = catalogIngestService.ingest(items, source, version);
+        return ApiResponse.onSuccess(Map.of("ingested", ingested));
     }
 }

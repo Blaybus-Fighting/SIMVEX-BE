@@ -2,6 +2,7 @@ package simvex.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever;
@@ -18,6 +19,7 @@ import simvex.domain.chat.dto.SseMessageDto;
 import simvex.domain.chat.entity.ChatMessage;
 import simvex.domain.chat.entity.ChatRole;
 import simvex.domain.chat.repository.ChatMessageRepository;
+import simvex.domain.modelobject.entity.ModelObject;
 import simvex.domain.session.entity.Session;
 import simvex.domain.session.repository.SessionRepository;
 import simvex.global.exception.CustomException;
@@ -42,30 +44,27 @@ public class ChatService {
     private static final Long DEFAULT_TIMEOUT = 60L * 60L * 1000L; // 1시간
     private static final int DEFAULT_PAGE_SIZE = 10;
 
-    public ChatMessageDto ragChat(ChatRequestDto chatRequestDto) {
-        String filterExpression = buildFilterExpression(chatRequestDto.toPayload());
+    public ChatMessageDto ragChat(Long userId, ChatRequestDto chatRequestDto) {
+        if (chatRequestDto.sessionId() != null) {
+            sessionRepository.findByIdAndUserId(chatRequestDto.sessionId(), userId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+        }
 
         String content = chatClient.prompt()
                 .user(chatRequestDto.question())
                 .advisors(advisor)
-                .advisors(a -> {
-                    if (filterExpression != null && !filterExpression.isBlank()) {
-                        a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, filterExpression);
-                    }
-                })
                 .call()
                 .content();
 
         return ChatMessageDto.create(ChatRole.ASSISTANT, content);
     }
 
-    public SseEmitter streamRagChat(ChatRequestDto chatRequestDto) {
-        Session session = sessionRepository.findById(chatRequestDto.sessionId())
+    public SseEmitter streamRagChat(Long userId, ChatRequestDto chatRequestDto) {
+        Session session = sessionRepository.findByIdAndUserId(chatRequestDto.sessionId(), userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
+
         ChatMessage userMessage = ChatMessage.create(session, chatRequestDto.question(), ChatRole.USER);
         chatMessageRepository.save(userMessage);
-
-        String filterExpression = buildFilterExpression(chatRequestDto.toPayload());
 
         SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
         StringBuilder rawResponse = new StringBuilder();
@@ -78,11 +77,6 @@ public class ChatService {
         Flux<String> content = chatClient.prompt()
                 .user(chatRequestDto.question())
                 .advisors(advisor)
-                .advisors(a -> {
-                    if (filterExpression != null && !filterExpression.isBlank()) {
-                        a.param(VectorStoreDocumentRetriever.FILTER_EXPRESSION, filterExpression);
-                    }
-                })
                 .stream()
                 .content();
 
@@ -133,31 +127,5 @@ public class ChatService {
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
-    }
-
-    /**
-     * VectorStoreDocumentRetriever의 FILTER_EXPRESSION용 표현식을 생성합니다.
-     * - String 값은 단일 따옴표로 감싸고 내부 따옴표는 escape 처리합니다.
-     * - Number/Boolean은 그대로 넣습니다.
-     * - 그 외 타입은 toString()으로 문자열 취급합니다.
-     *
-     * 예) {toolType=SPRING_AI, active=true} -> "toolType == 'SPRING_AI' && active == true"
-     */
-    private String buildFilterExpression(Map<String, String> metadataFilters) {
-        if (metadataFilters == null || metadataFilters.isEmpty()) {
-            return null;
-        }
-
-        return metadataFilters.entrySet().stream()
-                .filter(e -> e.getKey() != null && !e.getKey().isBlank())
-                .filter(e -> e.getValue() != null)
-                .map(e -> e.getKey() + " == " + toFilterLiteral(e.getValue()))
-                .collect(Collectors.joining(" && "));
-    }
-
-    private String toFilterLiteral(String value) {
-        // 단일따옴표 escape: ' -> \\'
-        value = value.replace("'", "\\\\'");
-        return "'" + value + "'";
     }
 }
