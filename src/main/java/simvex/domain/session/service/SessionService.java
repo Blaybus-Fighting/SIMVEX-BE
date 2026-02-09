@@ -21,8 +21,8 @@ public class SessionService {
     private final ModelObjectRepository modelRepository;
 
     // 세션 조회
-    public SessionRes getSession(User user, Long modelId) {
-        Session session = sessionRepository.findByUserIdAndModelObjectId(user.getId(), modelId)
+    public SessionRes getSession(Long userId, Long modelId) {
+        Session session = sessionRepository.findByUserIdAndModelObjectId(userId, modelId)
                 .orElseThrow(() -> new CustomException(ErrorCode.SESSION_NOT_FOUND));
 
         return new SessionRes(session.getModelObject().getId(), session.getViewData());
