@@ -52,6 +52,17 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/simvex:${{ github.ref_name }}
 
+      # 권한 정리 단계
+      - name: Pre-deploy (Permission Clean)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ github.ref == 'refs/heads/main' && secrets.MAIN_EC2_HOST || secrets.DEV_EC2_HOST }}
+          username: ubuntu
+          key: ${{ github.ref == 'refs/heads/main' && secrets.MAIN_EC2_SSH_KEY || secrets.DEV_EC2_SSH_KEY }}
+          script: |
+            sudo chown -R ubuntu:ubuntu ~/simvex/main ~/simvex/dev || true
+            rm -rf ~/simvex/main/* ~/simvex/dev/*
+
       # 설정 파일들을 서버로 복사
       - name: Copy config files to EC2
         uses: appleboy/scp-action@v0.1.7
