@@ -13,9 +13,10 @@ public class ModelObjectResponse {
     private String thumbnailUrl;
     private String usage;
     private String mainTheory;
+    private Long sessionId;
     private String viewData;
 
-    public static ModelObjectResponse from(ModelObject modelObject, String presignedUrl, String viewData) {
+    public static ModelObjectResponse from(ModelObject modelObject, String presignedUrl, Long sessionId, String viewData) {
         return ModelObjectResponse.builder()
                 .id(modelObject.getId())
                 .name(modelObject.getName())
@@ -23,6 +24,7 @@ public class ModelObjectResponse {
                 .thumbnailUrl(presignedUrl)
                 .usage(modelObject.getUsage())
                 .mainTheory(modelObject.getMainTheory())
+                .sessionId(sessionId)
                 .viewData(viewData)
                 .build();
     }
