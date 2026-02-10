@@ -94,6 +94,7 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "https://simvex-fe-git-develop-alal11s-projects.vercel.app",
+                "https://simvex-fe-ten.vercel.app/",
                 "https://simvex-fe.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE", "PATCH", "OPTIONS"));
