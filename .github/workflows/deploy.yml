@@ -61,6 +61,8 @@ jobs:
           key: ${{ github.ref == 'refs/heads/main' && secrets.MAIN_EC2_SSH_KEY || secrets.DEV_EC2_SSH_KEY }}
           source: "docker-compose.yml,${{ github.ref == 'refs/heads/main' && 'nginx/prod' || 'nginx/dev' }}"
           target: ${{ github.ref == 'refs/heads/main' && '~/simvex/main' || '~/simvex/dev' }}
+          rm: true
+          overwrite: true
 
       # 개발 서버(Dev) 배포
       - name: Deploy to Dev Server
