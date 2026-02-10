@@ -60,6 +60,6 @@ public class ModelObjectService {
 
         String presignedUrl = s3Service.getPresignedUrl(modelObject.getThumbnailUrl());
 
-        return ModelObjectResponse.from(modelObject, presignedUrl, session.getViewData());
+        return ModelObjectResponse.from(modelObject, presignedUrl, session.getId(), session.getViewData());
     }
 }
